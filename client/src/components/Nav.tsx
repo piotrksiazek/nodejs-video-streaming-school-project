@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Cookies from 'js-cookie';
 
 const Nav = styled.nav`
   background-color: #f5f5f5;
@@ -40,6 +42,17 @@ const Link = styled.li`
 `;
 
 export function Navbar() {
+  const [logged, setLogged] = useState(false);
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+
+    if(token) {
+        setLogged(true);
+    } else {
+        setLogged(false);
+    }
+  })
   return (
     <Nav>
       <Logo>Stream</Logo>
@@ -47,6 +60,7 @@ export function Navbar() {
         <Link><a href="/">Home</a></Link>
         <Link><a href="/login">Login</a></Link>
         <Link><a href="/register">Register</a></Link>
+        <Link><a href="/videos">Videos</a></Link>
       </Links>
     </Nav>
   );

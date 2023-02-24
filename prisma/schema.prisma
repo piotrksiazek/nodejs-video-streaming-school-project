@@ -19,3 +19,11 @@ model User {
   password String
 
 }
+
+model Video {
+  id    Int     @id @default(autoincrement())
+
+  path String @unique
+
+  userId Int
+}

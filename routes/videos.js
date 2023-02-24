@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8,24 +17,41 @@ const express_1 = __importDefault(require("express"));
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
+const uid_1 = require("uid");
+const auth_1 = require("./auth");
+const __1 = require("..");
 exports.uploadRouter = express_1.default.Router();
+exports.uploadRouter.use((req, res, next) => (0, auth_1.authMiddleware)(req, res, next));
 // Set up the multer middleware to handle file uploads
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path_1.default.join(__dirname, '../uploads/'));
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname);
+        cb(null, (0, uid_1.uid)(32) + ".mp4");
     },
 });
 const upload = (0, multer_1.default)({ storage });
-// Define the video upload route
-exports.uploadRouter.post('/', upload.single('video'), (req, res) => {
-    // This route handles video uploads
+exports.uploadRouter.post('/', upload.single('video'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const videoFile = req.file;
-    // Do something with the video file...
-    res.json({ message: 'Video uploaded successfully.' });
-});
+    if (!videoFile)
+        return;
+    yield __1.prismaClient.video.create({
+        data: {
+            userId: Number(req.userId),
+            path: videoFile.filename,
+        },
+    });
+}));
+exports.uploadRouter.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.userId;
+    const paths = yield __1.prismaClient.video.findMany({
+        where: {
+            userId: userId
+        }
+    });
+    res.json(paths);
+}));
 exports.uploadRouter.get('/:videoName', (req, res) => {
     const videoName = req.params.videoName;
     const videoPath = path_1.default.join(__dirname, '../uploads/', videoName);

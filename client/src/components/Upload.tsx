@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 export function Upload() {
   const [videoFile, setVideoFile] = useState(null)
@@ -15,9 +16,11 @@ export function Upload() {
     formData.append('video', videoFile)
 
     try {
-      const response = await axios.post('http://localhost:8000/upload', formData, {
+      const token = Cookies.get('token');
+      const response = await axios.post('/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
         },
       })
 

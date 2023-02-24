@@ -2,8 +2,13 @@ import express, {Request, Response} from 'express'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs';
+import { uid } from 'uid';
+import { authMiddleware, AuthRequest } from './auth';
+import { prismaClient } from '..';
 
 export const uploadRouter = express.Router()
+
+uploadRouter.use((req, res, next) => authMiddleware(req as AuthRequest, res, next));
 
 // Set up the multer middleware to handle file uploads
 const storage = multer.diskStorage({
@@ -11,22 +16,36 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, '../uploads/'))
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname)
+    cb(null, uid(32) + ".mp4")
   },
 })
 const upload = multer({ storage })
 
-// Define the video upload route
-uploadRouter.post('/', upload.single('video'), (req, res) => {
-  // This route handles video uploads
-  const videoFile = req.file
+uploadRouter.post('/', upload.single('video'), async (req: AuthRequest, res: Express.Response) => {
+  const videoFile = req.file;
 
-  // Do something with the video file...
+  if(!videoFile) return;
 
-  res.json({ message: 'Video uploaded successfully.' })
+  await prismaClient.video.create({
+    data: {
+      userId: Number(req.userId),
+      path: videoFile.filename,
+    },
+  })
 })
 
-uploadRouter.get('/:videoName', (req: Request<{videoName: string}>, res: Response) => {
+uploadRouter.get("/all", async (req: Request<{userId: number}>, res) => {
+  const userId = req.params.userId;
+  const paths = await prismaClient.video.findMany({
+    where: {
+      userId: userId
+    }
+  });
+
+  res.json(paths);
+})
+
+uploadRouter.get('/:videoName', (req: Request<{videoName: string}>, res: express.Response) => {
   const videoName = req.params.videoName;
   const videoPath = path.join(__dirname, '../uploads/', videoName);
   const stat = fs.statSync(videoPath);
