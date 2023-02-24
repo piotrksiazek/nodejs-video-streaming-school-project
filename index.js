@@ -30,11 +30,11 @@ exports.prismaClient = new client_1.PrismaClient();
 //   .finally(async () => {
 //     await prismaClient.$disconnect()
 //   })
+app.use(express_1.default.json());
 app.use('/birds', test_1.birdsRouter);
 app.use('/auth', auth_1.authRouter);
 app.use('/upload', videos_1.uploadRouter);
 app.use('/static', express_1.default.static(__dirname + "/uploads"));
-app.use(express_1.default.json());
 var corsOptions = {
     origin: 'http://localhost:3000/',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204

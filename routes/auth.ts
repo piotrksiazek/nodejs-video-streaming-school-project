@@ -37,7 +37,8 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
 export const authRouter = express.Router()
 // User registration route
 authRouter.post('/register', async (req, res) => {
-  const { name, email, password } = req.body
+  console.log(req.body);
+  const { email, password } = req.body
 
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10)

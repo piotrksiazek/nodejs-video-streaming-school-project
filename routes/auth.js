@@ -38,7 +38,8 @@ exports.authMiddleware = authMiddleware;
 exports.authRouter = express_1.default.Router();
 // User registration route
 exports.authRouter.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, password } = req.body;
+    console.log(req.body);
+    const { email, password } = req.body;
     // Hash the password
     const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
     try {
