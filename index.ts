@@ -37,7 +37,7 @@ app.use('/birds', birdsRouter);
 app.use('/auth', authRouter);
 app.use('/upload', uploadRouter);
 
-app.use(express.static("uploads"));
+app.use('/static', express.static(__dirname + "/uploads"));
 
 app.use(express.json());
 
