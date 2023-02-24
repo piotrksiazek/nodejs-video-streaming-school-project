@@ -40,7 +40,8 @@ app.use('/upload', uploadRouter);
 app.use('/static', express.static(__dirname + "/uploads"));
 
 var corsOptions = {
-  origin: 'http://localhost:3000/',
+  origin: '*',
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
