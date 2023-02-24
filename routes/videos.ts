@@ -35,10 +35,10 @@ uploadRouter.post('/', upload.single('video'), async (req: AuthRequest, res: Exp
 })
 
 uploadRouter.get("/all", async (req: Request<{userId: number}>, res) => {
-  const userId = req.params.userId;
+  const userId = req.query.userId as string;
   const paths = await prismaClient.video.findMany({
     where: {
-      userId: userId
+      userId: parseInt(userId)
     }
   });
 

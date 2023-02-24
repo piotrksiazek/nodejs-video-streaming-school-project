@@ -12,11 +12,6 @@ export const VideoPlayer: React.FC<{ src: string }> = ({ src }) => {
       <video src={src} controls onClick={togglePlay} autoPlay={true} width={650}>
       {/* <source src={src} type="video/mp4" /> */}
       </video>
-      {playing ? (
-        <button onClick={togglePlay}>Pause</button>
-      ) : (
-        <button onClick={togglePlay}>Play</button>
-      )}
     </div>
   );
 };

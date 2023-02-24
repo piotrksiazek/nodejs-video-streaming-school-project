@@ -44,10 +44,10 @@ exports.uploadRouter.post('/', upload.single('video'), (req, res) => __awaiter(v
     });
 }));
 exports.uploadRouter.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.params.userId;
+    const userId = req.query.userId;
     const paths = yield __1.prismaClient.video.findMany({
         where: {
-            userId: userId
+            userId: parseInt(userId)
         }
     });
     res.json(paths);

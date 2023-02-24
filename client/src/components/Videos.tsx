@@ -27,8 +27,12 @@ export const Videos = () => {
             navigate("/");
         }
 
+        const tokenDecrypted = jwt(token) as User;
+        const userId = tokenDecrypted.userId;
+
         const fetchPaths = async () => {
-            const {data} = await axios.get("upload/all", {
+            const {data} = await axios.get(`upload/all`, {
+                params:{userId: userId},
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
